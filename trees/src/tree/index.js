@@ -1,29 +1,27 @@
+import TreeNode from "./TreeNode";
 import "./index.css";
 
-export default function Tree() {
+const inputTreeData = require("./data.json");
+
+const addLevelsToTree = (treeData, parentLevel) =>
+  treeData.map((curData, index) => {
+    const curNode = `${parentLevel ? `${parentLevel}.` : ""}` + (index + 1);
+    return {
+      node: curData.node,
+      level: curNode,
+      children: addLevelsToTree(curData.children, curNode),
+    };
+  });
+
+const Tree = () => {
+  const treeData = addLevelsToTree(inputTreeData);
   return (
     <div className="tree">
-      <ul>
-        <li>
-          <p>root</p>
-          <ul>
-            <li><p>ant</p></li>
-            <li>
-                <p>bear</p>
-                <ul>
-                  <li><p>cat</p></li>
-                  <li>
-                    <p>dog</p>
-                    <ul>
-                      <li><p>elephant</p></li>
-                    </ul>
-                  </li>
-                </ul>
-            </li>
-            <li><p>frog</p></li>
-          </ul>
-        </li>
-      </ul>
+      {treeData.map((curData, index) => (
+        <TreeNode key={curData + index} {...curData} />
+      ))}
     </div>
   );
-}
+};
+
+export default Tree;
