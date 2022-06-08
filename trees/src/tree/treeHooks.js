@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getBin, updateBin } from "../api/treeApi";
+import debounce from "lodash.debounce";
+
 import {
   addLevelsToTree,
   alphabetiseTreeData,
@@ -12,6 +15,38 @@ export const useTree = (initialTreeData) => {
     addLevelsToTree(initialTreeData)
   );
   const [alphabetiseState, setAlphabetiseState] = useState(false);
+
+  const fetchTreeData = useCallback(async () => {
+    try {
+      const currentTreeData = await getBin();
+      setTreeData(currentTreeData.record);
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  const updateTreeData = useCallback(
+    debounce(
+      async (updatedTreeData) => {
+        try {
+          await updateBin(updatedTreeData);
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      1000,
+      {}
+    ),
+    []
+  );
+
+  useEffect(() => {
+    fetchTreeData();
+  }, [fetchTreeData]);
+
+  useEffect(() => {
+    updateTreeData(treeData);
+  }, [treeData, updateTreeData]);
 
   const addNode = (nodeName, nodeParentLevelId) => {
     const newNode = { node: nodeName, children: [] };
