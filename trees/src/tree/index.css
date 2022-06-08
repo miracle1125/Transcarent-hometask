@@ -14,7 +14,11 @@ div > ul {
   padding: 0;
 }
 
-ul {
+.delete--btn {
+  cursor: pointer;
+}
+
+/* ul {
   display: flex;
   flex-direction: column-reverse;
-}
+} */

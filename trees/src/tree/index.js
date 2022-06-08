@@ -1,26 +1,25 @@
 import TreeNode from "./TreeNode";
+import SwitchButton from "../components/switchButton";
+import { TreeContext } from "./TreeContext";
+import { useTree } from "./treeHooks";
 import "./index.css";
 
 const inputTreeData = require("./data.json");
 
-const addLevelsToTree = (treeData, parentLevel) =>
-  treeData.map((curData, index) => {
-    const curNode = `${parentLevel ? `${parentLevel}.` : ""}` + (index + 1);
-    return {
-      node: curData.node,
-      level: curNode,
-      children: addLevelsToTree(curData.children, curNode),
-    };
-  });
-
 const Tree = () => {
-  const treeData = addLevelsToTree(inputTreeData);
+  const { treeData, addNode, deleteNode, alphabetiseState, alphabetiseTree } =
+    useTree(inputTreeData);
   return (
-    <div className="tree">
-      {treeData.map((curData, index) => (
-        <TreeNode key={curData + index} {...curData} />
-      ))}
-    </div>
+    <TreeContext.Provider value={{ treeData, addNode, deleteNode }}>
+      <div className="tree">
+        <SwitchButton checked={alphabetiseState} onChange={alphabetiseTree} />
+        <ul>
+          {treeData.map((curData, index) => (
+            <TreeNode key={curData + index} {...curData} level={0} />
+          ))}
+        </ul>
+      </div>
+    </TreeContext.Provider>
   );
 };
 
